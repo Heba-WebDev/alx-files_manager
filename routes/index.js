@@ -1,17 +1,23 @@
-#!/usr/bin/node
+import AppController from '../controllers/AppController';
+import UsersController from '../controllers/UsersController';
+import AuthController from '../controllers/AuthController';
+import FilesController from '../controllers/FilesController';
 
-const express = require('express');
-const AppController = require('../controllers/AppController');
-const UsersController = require('../controllers/UsersController');
-const AuthController = require('../controllers/AuthController');
+const router = (app) => {
+  // Check for the status of the API database and Redis
+  app.get('/status', AppController.getStatus);
+  app.get('/stats', AppController.getStats);
 
-const router = express.Router();
+  // Create a new user
+  app.post('/users', UsersController.postNew);
 
-router.get('/status', AppController.getStatus);
-router.get('/stats', AppController.getStats);
-router.post('/users', UsersController.postNew);
-router.get('/connect', AuthController.getConnect);
-router.get('/disconnect', AuthController.getDisconnect);
-router.get('/users/me', AuthController.getMe);
+  // Authenticate a user
+  app.get('/connect', AuthController.getConnect);
+  app.get('/disconnect', AuthController.getDisconnect);
+  app.get('/users/me', UsersController.getMe);
 
-module.exports = router;
+  // Create new files
+  app.post('/files', FilesController.postUpload);
+};
+
+export default router;
